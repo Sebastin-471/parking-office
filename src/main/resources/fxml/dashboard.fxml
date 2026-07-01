@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.DashboardController" stylesheets="@../css/styles.css">
+    <top>
+        <MenuBar styleClass="menu-bar">
+            <Menu text="Archivo">
+                <MenuItem text="Cerrar Sesión" onAction="#logout"/>
+                <MenuItem text="Salir" onAction="#exitApp"/>
+            </Menu>
+            <Menu text="Gestión">
+                <MenuItem text="Tarifas"/>
+                <MenuItem text="Reportes"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30px;">
+            <Label fx:id="lblWelcome" styleClass="label-header" text="Dashboard Principal" />
+            
+            <HBox spacing="30" alignment="CENTER">
+                <!-- Panel de Entrada -->
+                <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label text="Registrar Entrada" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="txtPlacaEntrada" promptText="Placa del Vehículo" styleClass="text-field"/>
+                    <ComboBox fx:id="cmbTipoVehiculo" promptText="Tipo de Vehículo" maxWidth="Infinity" styleClass="text-field"/>
+                    <ComboBox fx:id="cmbEspacio" promptText="Espacio Asignado" maxWidth="Infinity" styleClass="text-field"/>
+                    <Button text="REGISTRAR ENTRADA" onAction="#registrarEntrada" maxWidth="Infinity" styleClass="button-success"/>
+                    <Label fx:id="lblMensajeEntrada" styleClass="label-error" wrapText="true"/>
+                </VBox>
+                
+                <!-- Panel de Salida -->
+                <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label text="Registrar Salida" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="txtPlacaSalida" promptText="Placa del Vehículo" styleClass="text-field"/>
+                    <Button text="BUSCAR VEHÍCULO" onAction="#buscarVehiculoSalida" maxWidth="Infinity" styleClass="button-primary"/>
+                    
+                    <VBox fx:id="pnlDetalleSalida" spacing="10" visible="false" managed="false">
+                        <Label fx:id="lblDetalleTiempo" text="Tiempo: 0h 0m" />
+                        <Label fx:id="lblDetalleMonto" text="Total a Pagar: $0.00" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                        <Button text="PROCESAR PAGO Y SALIDA" onAction="#procesarSalida" maxWidth="Infinity" styleClass="button-danger"/>
+                    </VBox>
+                    <Label fx:id="lblMensajeSalida" styleClass="label-error" wrapText="true"/>
+                </VBox>
+            </HBox>
+
+            <!-- Tabla de ocupación -->
+            <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                <Label text="Vehículos Actuales" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+                <TableView fx:id="tblMovimientosActivos" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colPlaca" text="Placa" prefWidth="120"/>
+                        <TableColumn fx:id="colTipo" text="Tipo" prefWidth="120"/>
+                        <TableColumn fx:id="colEspacio" text="Espacio" prefWidth="100"/>
+                        <TableColumn fx:id="colHoraIngreso" text="Hora Ingreso" prefWidth="200"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

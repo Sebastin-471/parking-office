@@ -1,0 +1,22 @@
+target/
+*.class
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.project
+.settings/
+.classpath
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# OS specific
+.DS_Store
+Thumbs.db
