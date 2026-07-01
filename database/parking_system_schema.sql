@@ -78,7 +78,7 @@ INSERT INTO tipos_vehiculo (nombre, descripcion) VALUES ('AUTOMOVIL', 'Auto part
 -- Create default admin (password: admin123, hash generated using jbcrypt)
 -- password admin123 hash: $2a$10$D/v6vA4/O1K0Y3N9Yc/w3u.n9.o51f/A4384n48/8x./4a/59/3a2
 INSERT INTO usuarios (username, password_hash, nombre_completo, rol_id) 
-VALUES ('admin', '$2a$10$7cK.Y.4vF.l2.M.2X.xXeeoNnQO5s9qK/Z.K/zK/rPz/TzQO5y', 'Administrador del Sistema', 1) ON CONFLICT DO NOTHING;
+VALUES ('admin', '$2a$10$YQqLUXH0E.zaq7GMFsSTH.eUX3VHP43ZazkMkvLCGCY4qpWYtWoTm', 'Administrador del Sistema', 1) ON CONFLICT DO NOTHING;
 
 -- Basic spaces
 INSERT INTO espacios (codigo) VALUES ('A1'), ('A2'), ('A3'), ('A4'), ('A5') ON CONFLICT DO NOTHING;
