@@ -15,9 +15,6 @@ public class Movimiento {
     @JoinColumn(name = "vehiculo_id", nullable = false)
     private Vehiculo vehiculo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "espacio_id", nullable = false)
-    private Espacio espacio;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_ingreso_id", nullable = false)
@@ -52,8 +49,6 @@ public class Movimiento {
     public Vehiculo getVehiculo() { return vehiculo; }
     public void setVehiculo(Vehiculo vehiculo) { this.vehiculo = vehiculo; }
 
-    public Espacio getEspacio() { return espacio; }
-    public void setEspacio(Espacio espacio) { this.espacio = espacio; }
 
     public Usuario getUsuarioIngreso() { return usuarioIngreso; }
     public void setUsuarioIngreso(Usuario usuarioIngreso) { this.usuarioIngreso = usuarioIngreso; }

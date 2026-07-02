@@ -13,15 +13,15 @@ public class AuthService {
         this.usuarioRepository = new UsuarioRepository();
     }
 
-    public boolean login(String username, String password) {
+    public Usuario login(String username, String password) {
         Usuario usuario = usuarioRepository.findByUsername(username);
         if (usuario != null && usuario.getActivo()) {
             if (BCrypt.checkpw(password, usuario.getPasswordHash())) {
                 this.loggedInUser = usuario;
-                return true;
+                return usuario;
             }
         }
-        return false;
+        return null;
     }
 
     public void logout() {

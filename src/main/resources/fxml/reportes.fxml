@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" style="-fx-padding: 30px;" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.ReportesController">
+    <Label text="Reportes y Cierre de Caja" styleClass="label-header" />
+    
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label text="Desde:" />
+        <DatePicker fx:id="dpInicio" />
+        
+        <Label text="Hasta:" />
+        <DatePicker fx:id="dpFin" />
+        
+        <Button text="GENERAR REPORTE" onAction="#generarReporte" styleClass="button-primary"/>
+    </HBox>
+
+    <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+        <Label text="Resultados" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+        
+        <HBox spacing="50">
+            <VBox spacing="5">
+                <Label text="Vehículos Atendidos:" style="-fx-text-fill: gray;"/>
+                <Label fx:id="lblTotalVehiculos" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            </VBox>
+            <VBox spacing="5">
+                <Label text="Total Recaudado:" style="-fx-text-fill: gray;"/>
+                <Label fx:id="lblTotalRecaudado" text="$0.00" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2ecc71;"/>
+            </VBox>
+        </HBox>
+        
+        <Separator />
+        
+        <Button text="EXPORTAR A PDF" onAction="#exportarPDF" maxWidth="Infinity" styleClass="button-success" fx:id="btnExportar" disable="true"/>
+        <Label fx:id="lblMensaje" styleClass="label-success" wrapText="true"/>
+    </VBox>
+</VBox>

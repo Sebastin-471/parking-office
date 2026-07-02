@@ -2,6 +2,8 @@ package com.parkingoffice.controller;
 
 import com.parkingoffice.App;
 import com.parkingoffice.service.AuthService;
+import com.parkingoffice.core.SessionManager;
+import com.parkingoffice.model.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -32,7 +34,9 @@ public class LoginController {
             return;
         }
 
-        if (authService.login(username, password)) {
+        Usuario usuario = authService.login(username, password);
+        if (usuario != null) {
+            SessionManager.getInstance().setCurrentUser(usuario);
             App.setRoot("dashboard");
         } else {
             lblError.setText("Credenciales incorrectas o usuario inactivo.");

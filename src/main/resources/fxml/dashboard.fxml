@@ -12,8 +12,8 @@
                 <MenuItem text="Salir" onAction="#exitApp"/>
             </Menu>
             <Menu text="Gestión">
-                <MenuItem text="Tarifas"/>
-                <MenuItem text="Reportes"/>
+                <MenuItem text="Tarifas" onAction="#abrirTarifas"/>
+                <MenuItem text="Reportes" onAction="#abrirReportes"/>
             </Menu>
         </MenuBar>
     </top>
@@ -27,7 +27,7 @@
                     <Label text="Registrar Entrada" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
                     <TextField fx:id="txtPlacaEntrada" promptText="Placa del Vehículo" styleClass="text-field"/>
                     <ComboBox fx:id="cmbTipoVehiculo" promptText="Tipo de Vehículo" maxWidth="Infinity" styleClass="text-field"/>
-                    <ComboBox fx:id="cmbEspacio" promptText="Espacio Asignado" maxWidth="Infinity" styleClass="text-field"/>
+
                     <Button text="REGISTRAR ENTRADA" onAction="#registrarEntrada" maxWidth="Infinity" styleClass="button-success"/>
                     <Label fx:id="lblMensajeEntrada" styleClass="label-error" wrapText="true"/>
                 </VBox>
@@ -54,7 +54,7 @@
                     <columns>
                         <TableColumn fx:id="colPlaca" text="Placa" prefWidth="120"/>
                         <TableColumn fx:id="colTipo" text="Tipo" prefWidth="120"/>
-                        <TableColumn fx:id="colEspacio" text="Espacio" prefWidth="100"/>
+
                         <TableColumn fx:id="colHoraIngreso" text="Hora Ingreso" prefWidth="200"/>
                     </columns>
                 </TableView>

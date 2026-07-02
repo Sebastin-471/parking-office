@@ -31,7 +31,7 @@
         <mapping class="com.parkingoffice.model.TipoVehiculo"/>
         <mapping class="com.parkingoffice.model.Vehiculo"/>
         <mapping class="com.parkingoffice.model.Tarifa"/>
-        <mapping class="com.parkingoffice.model.Espacio"/>
+
         <mapping class="com.parkingoffice.model.Movimiento"/>
 
     </session-factory>

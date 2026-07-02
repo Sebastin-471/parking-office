@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" style="-fx-padding: 30px;" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.TarifasController">
+    <Label text="Gestión de Tarifas" styleClass="label-header" />
+    
+    <HBox spacing="20">
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <Label text="Tipos de Vehículo" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+            <ListView fx:id="lstVehiculos" VBox.vgrow="ALWAYS" prefHeight="200" />
+        </VBox>
+
+        <VBox spacing="15" HBox.hgrow="ALWAYS" styleClass="card">
+            <Label text="Actualizar Tarifa" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+            <Label fx:id="lblVehiculoSeleccionado" text="Seleccione un vehículo" style="-fx-font-style: italic; -fx-text-fill: gray;"/>
+            
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Monto por Hora ($):" prefWidth="130"/>
+                <TextField fx:id="txtMontoHora" promptText="0.00" styleClass="text-field" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Monto por Minuto ($):" prefWidth="130"/>
+                <TextField fx:id="txtMontoMinuto" promptText="0.00" styleClass="text-field" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <Button text="GUARDAR TARIFA" onAction="#guardarTarifa" maxWidth="Infinity" styleClass="button-success"/>
+            <Label fx:id="lblMensaje" styleClass="label-error" wrapText="true"/>
+        </VBox>
+    </HBox>
+</VBox>
