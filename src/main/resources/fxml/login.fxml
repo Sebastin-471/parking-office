@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="0.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.LoginController" stylesheets="@../css/styles.css">
+
+   <VBox alignment="CENTER" spacing="20" maxWidth="400" styleClass="card">
+       <padding>
+           <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+       </padding>
+
+       <Label text="Parking Office" styleClass="label-header"/>
+       <Label text="Inicie sesión para continuar" styleClass="label-subheader"/>
+       
+       <VBox spacing="10" maxWidth="Infinity">
+           <Label text="Usuario" />
+           <TextField fx:id="txtUsername" promptText="Ingrese su usuario" styleClass="text-field"/>
+           
+           <Label text="Contraseña" />
+           <PasswordField fx:id="txtPassword" promptText="Ingrese su contraseña" styleClass="password-field"/>
+           
+           <Label fx:id="lblError" styleClass="label-error" wrapText="true"/>
+           
+           <Button text="INGRESAR" onAction="#login" maxWidth="Infinity" styleClass="button-primary">
+               <VBox.margin>
+                   <Insets top="15.0" />
+               </VBox.margin>
+           </Button>
+       </VBox>
+   </VBox>
+
+</VBox>

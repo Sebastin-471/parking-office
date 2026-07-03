@@ -1,0 +1,39 @@
+# Build output
+target/
+*.class
+
+# Generated tickets and reports
+tickets/
+*.pdf
+
+# IDE specific
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Eclipse
+.project
+.settings/
+.classpath
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Logs
+*.log
+logs/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Database / local config
+src/main/resources/application.properties
+*.properties
+!src/main/resources/*.properties.example
