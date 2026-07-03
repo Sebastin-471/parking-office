@@ -1,6 +1,7 @@
 package com.parkingoffice;
 
 import com.parkingoffice.repository.HibernateUtil;
+import com.parkingoffice.service.AuthService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +18,9 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         // Initialize Hibernate to ensure DB connection is ready
         HibernateUtil.getSessionFactory();
+        
+        // Ensure default admin exists
+        new AuthService().createDefaultAdminIfNotExists();
 
         scene = new Scene(loadFXML("login"), 640, 480);
         stage.setScene(scene);

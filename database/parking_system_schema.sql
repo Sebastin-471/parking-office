@@ -72,7 +72,3 @@ INSERT INTO tipos_vehiculo (nombre, descripcion) VALUES
 ('MOTOTAXI', 'Mototaxi'),
 ('CAMIONETA', 'Camioneta') ON CONFLICT DO NOTHING;
 
--- Create default admin (password: admin123, hash generated using jbcrypt)
--- password admin123 hash: $2a$10$D/v6vA4/O1K0Y3N9Yc/w3u.n9.o51f/A4384n48/8x./4a/59/3a2
-INSERT INTO usuarios (username, password_hash, nombre_completo, rol_id) 
-VALUES ('admin', '$2a$10$YQqLUXH0E.zaq7GMFsSTH.eUX3VHP43ZazkMkvLCGCY4qpWYtWoTm', 'Administrador del Sistema', 1) ON CONFLICT DO NOTHING;

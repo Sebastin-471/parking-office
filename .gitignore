@@ -34,5 +34,6 @@ logs/
 Thumbs.db
 
 # Database / local config
+src/main/resources/application.properties
 *.properties
-!src/main/resources/*.properties
+!src/main/resources/*.properties.example

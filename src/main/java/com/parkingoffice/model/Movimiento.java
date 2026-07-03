@@ -40,9 +40,15 @@ public class Movimiento {
     @Column(name = "estado", length = 20)
     private String estado = "ACTIVO"; // ACTIVO, FINALIZADO
 
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     public Movimiento() {}
 
     // Getters and Setters
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

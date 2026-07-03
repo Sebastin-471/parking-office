@@ -8,6 +8,7 @@ import com.parkingoffice.repository.MovimientoRepository;
 import com.parkingoffice.repository.TipoVehiculoRepository;
 import com.parkingoffice.service.ParkingService;
 import com.parkingoffice.service.ReportService;
+import com.parkingoffice.exception.ParkingException;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -20,15 +21,17 @@ import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.fxml.FXMLLoader;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class DashboardController {
+
+    private static final Pattern PLACA_PATTERN = Pattern.compile("^[A-Z0-9]{3}-?[A-Z0-9]{3,4}$");
 
     @FXML private Label lblWelcome;
     
@@ -121,6 +124,12 @@ public class DashboardController {
             return;
         }
 
+        if (!PLACA_PATTERN.matcher(placa.toUpperCase()).matches()) {
+            lblMensajeEntrada.setText("Formato de placa inválido (Ej: ABC-123).");
+            lblMensajeEntrada.setStyle("-fx-text-fill: #e74c3c;");
+            return;
+        }
+
         try {
             Movimiento mov = parkingService.registrarEntrada(placa.toUpperCase(), tipo, SessionManager.getInstance().getCurrentUser());
             
@@ -135,8 +144,11 @@ public class DashboardController {
             cmbTipoVehiculo.setValue(null);
             cargarMovimientosActivos();
             
-        } catch (Exception e) {
+        } catch (ParkingException e) {
             lblMensajeEntrada.setText(e.getMessage());
+            lblMensajeEntrada.setStyle("-fx-text-fill: #e74c3c;");
+        } catch (Exception e) {
+            lblMensajeEntrada.setText("Error inesperado: " + e.getMessage());
             lblMensajeEntrada.setStyle("-fx-text-fill: #e74c3c;");
         }
     }
@@ -144,8 +156,8 @@ public class DashboardController {
     @FXML
     private void buscarVehiculoSalida() {
         String placa = txtPlacaSalida.getText().trim().toUpperCase();
-        if (placa.isEmpty()) {
-            lblMensajeSalida.setText("Ingrese una placa válida.");
+        if (placa.isEmpty() || !PLACA_PATTERN.matcher(placa).matches()) {
+            lblMensajeSalida.setText("Ingrese una placa válida (Ej: ABC-123).");
             lblMensajeSalida.setStyle("-fx-text-fill: #e74c3c;");
             pnlDetalleSalida.setVisible(false);
             pnlDetalleSalida.setManaged(false);
@@ -198,8 +210,11 @@ public class DashboardController {
             txtPlacaSalida.clear();
             cargarMovimientosActivos();
             
+        } catch (ParkingException e) {
+            lblMensajeSalida.setText(e.getMessage());
+            lblMensajeSalida.setStyle("-fx-text-fill: #e74c3c;");
         } catch (Exception e) {
-            lblMensajeSalida.setText("Error: " + e.getMessage());
+            lblMensajeSalida.setText("Error inesperado: " + e.getMessage());
             lblMensajeSalida.setStyle("-fx-text-fill: #e74c3c;");
         }
     }

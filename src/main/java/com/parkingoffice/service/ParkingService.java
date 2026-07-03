@@ -3,6 +3,8 @@ package com.parkingoffice.service;
 import com.parkingoffice.model.*;
 import com.parkingoffice.repository.*;
 
+import com.parkingoffice.exception.*;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -20,7 +22,7 @@ public class ParkingService {
         this.tarifaRepository = new TarifaRepository();
     }
 
-    public Movimiento registrarEntrada(String placa, TipoVehiculo tipoVehiculo, Usuario usuario) throws Exception {
+    public Movimiento registrarEntrada(String placa, TipoVehiculo tipoVehiculo, Usuario usuario) throws ParkingException {
         // Find or create vehiculo
         Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa);
         if (vehiculo == null) {
@@ -29,14 +31,14 @@ public class ParkingService {
             vehiculo.setTipoVehiculo(tipoVehiculo);
             vehiculoRepository.save(vehiculo);
         } else if (movimientoRepository.findActivoByVehiculo(vehiculo.getId()) != null) {
-            throw new Exception("El vehículo ya se encuentra en el estacionamiento.");
+            throw new VehicleAlreadyParkedException("El vehículo ya se encuentra en el estacionamiento.");
         }
 
 
 
         Tarifa tarifa = tarifaRepository.findActivaByTipoVehiculo(tipoVehiculo.getId());
         if (tarifa == null) {
-            throw new Exception("No hay tarifa activa para este tipo de vehículo.");
+            throw new NoActiveRateException("No hay tarifa activa para este tipo de vehículo.");
         }
 
 
@@ -53,9 +55,9 @@ public class ParkingService {
         return mov;
     }
 
-    public Movimiento registrarSalida(Movimiento movimiento, Usuario usuario) throws Exception {
+    public Movimiento registrarSalida(Movimiento movimiento, Usuario usuario) throws ParkingException {
         if (!"ACTIVO".equals(movimiento.getEstado())) {
-            throw new Exception("El movimiento ya está finalizado.");
+            throw new ParkingException("El movimiento ya está finalizado.");
         }
 
         movimiento.setFechaSalida(LocalDateTime.now());
