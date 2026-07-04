@@ -1,5 +1,6 @@
 package com.parkingoffice.service;
 
+import com.parkingoffice.core.SessionManager;
 import com.parkingoffice.model.Movimiento;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -82,6 +83,10 @@ public class ReportService {
     }
 
     public void generarReporteGeneral(LocalDate inicio, LocalDate fin, int totalVehiculos, BigDecimal totalRecaudado, String outputPath) throws IOException {
+        if (!SessionManager.getInstance().isAdmin()) {
+            throw new SecurityException("Solo el administrador puede generar reportes generales.");
+        }
+
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);

@@ -1,5 +1,6 @@
 package com.parkingoffice.controller;
 
+import com.parkingoffice.core.SessionManager;
 import com.parkingoffice.model.Movimiento;
 import com.parkingoffice.repository.MovimientoRepository;
 import com.parkingoffice.service.ReportService;
@@ -38,11 +39,23 @@ public class ReportesController {
 
     @FXML
     private void generarReporte() {
+        if (!SessionManager.getInstance().isAdmin()) {
+            lblMensaje.setText("Solo el administrador puede ver reportes.");
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+            return;
+        }
+
         inicioSeleccionado = dpInicio.getValue();
         finSeleccionado = dpFin.getValue();
 
         if (inicioSeleccionado == null || finSeleccionado == null) {
             lblMensaje.setText("Seleccione un rango de fechas válido.");
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+            return;
+        }
+
+        if (inicioSeleccionado.isAfter(finSeleccionado)) {
+            lblMensaje.setText("La fecha de inicio no puede ser posterior a la fecha fin.");
             lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
             return;
         }
@@ -66,6 +79,12 @@ public class ReportesController {
 
     @FXML
     private void exportarPDF() {
+        if (!SessionManager.getInstance().isAdmin()) {
+            lblMensaje.setText("Solo el administrador puede exportar reportes.");
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+            return;
+        }
+
         try {
             String path = "tickets/cierre_caja_" + LocalDate.now().toString() + ".pdf";
             reportService.generarReporteGeneral(inicioSeleccionado, finSeleccionado, totalVehiculos, totalRecaudado, path);

@@ -1,5 +1,6 @@
 package com.parkingoffice.controller;
 
+import com.parkingoffice.core.SessionManager;
 import com.parkingoffice.model.Tarifa;
 import com.parkingoffice.model.TipoVehiculo;
 import com.parkingoffice.repository.TarifaRepository;
@@ -68,6 +69,12 @@ public class TarifasController {
 
     @FXML
     private void guardarTarifa() {
+        if (!SessionManager.getInstance().isAdmin()) {
+            lblMensaje.setText("Solo el administrador puede modificar tarifas.");
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+            return;
+        }
+
         if (vehiculoSeleccionado == null) {
             lblMensaje.setText("Seleccione un vehículo primero.");
             lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
@@ -77,6 +84,12 @@ public class TarifasController {
         try {
             BigDecimal mHora = new BigDecimal(txtMontoHora.getText());
             BigDecimal mMinuto = new BigDecimal(txtMontoMinuto.getText());
+
+            if (mHora.compareTo(BigDecimal.ZERO) <= 0 || mMinuto.compareTo(BigDecimal.ZERO) <= 0) {
+                lblMensaje.setText("Los montos deben ser mayores a cero.");
+                lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+                return;
+            }
 
             if (tarifaActual != null) {
                 tarifaActual.setActiva(false);

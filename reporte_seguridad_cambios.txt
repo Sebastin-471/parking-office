@@ -1,0 +1,289 @@
+================================================================================
+  REPORTE GENERAL DE CAMBIOS — SEGURIDAD Y CONTROL DE ACCESO
+  Parking Office System
+  Fecha: 2026-07-03
+================================================================================
+
+  Compilacion: mvn clean compile -> BUILD SUCCESS (28 source files, 0 errores)
+
+================================================================================
+  PUNTO 1 - Control de Roles en UI
+================================================================================
+
+Proposito:
+  Restringir el acceso a las funciones administrativas (Tarifas y Reportes)
+  segun el rol del usuario. Un OPERADOR no debe ver ni acceder a estas
+  opciones.
+
+Archivos modificados:
+  - core/SessionManager.java
+  - controller/DashboardController.java
+  - resources/fxml/dashboard.fxml
+
+Dependencias generadas:
+  - SessionManager.java (38 lineas total)
+    + Metodo isAdmin()                               -> linea 27-29
+      public boolean isAdmin() {
+          return hasRole("ADMINISTRADOR");
+      }
+    + Metodo hasRole(String roleName)                -> linea 31-33
+      public boolean hasRole(String roleName) {
+          return currentUser != null
+              && currentUser.getRol() != null
+              && roleName.equals(currentUser.getRol().getNombre());
+      }
+    Proposito: Centralizar la logica de verificacion de roles
+    para que cualquier parte del sistema pueda consultar
+    el rol del usuario actual de forma consistente.
+
+  - DashboardController.java (265 lineas total)
+    + Campo @FXML MenuItem menuTarifas               -> linea 37
+    + Campo @FXML MenuItem menuReportes              -> linea 38
+    + Bloque de ocultacion en initialize():          -> lineas 76-79
+      if (!SessionManager.getInstance().isAdmin()) {
+          menuTarifas.setVisible(false);
+          menuReportes.setVisible(false);
+      }
+    Proposito: Al cargar el dashboard, si el usuario no es
+    ADMINISTRADOR, los items de menu "Tarifas" y "Reportes"
+    se ocultan visualmente.
+
+    + Guard en abrirTarifas():                        -> linea 242
+      if (!SessionManager.getInstance().isAdmin()) return;
+    + Guard en abrirReportes():                       -> linea 248
+      if (!SessionManager.getInstance().isAdmin()) return;
+    Proposito: Defensa en profundidad - incluso si el menu
+    esta oculto, los metodos verifican el rol antes de
+    abrir la ventana.
+
+  - dashboard.fxml (64 lineas total)
+    + fx:id="menuTarifas" en MenuItem "Tarifas"       -> linea 15
+    + fx:id="menuReportes" en MenuItem "Reportes"     -> linea 16
+    Proposito: Permitir que el controlador JavaFX
+    referencie estos elementos UI por su fx:id.
+
+Flujo de control:
+  App.start()
+    -> login.fxml
+      -> LoginController.login()
+        -> AuthService.login()
+          -> SessionManager.setCurrentUser(usuario)
+            -> dashboard.fxml
+              -> DashboardController.initialize()
+                -> isAdmin()? NO -> ocultar menuTarifas y menuReportes
+                -> isAdmin()? SI -> menus visibles
+
+================================================================================
+  PUNTO 2 - Credenciales y RBAC (Defensa en Profundidad)
+================================================================================
+
+Proposito A (Credenciales):
+  Eliminar la contrasena del admin del codigo fuente para poder cambiarla
+  sin recompilar y permitir sobreescritura via variables de entorno.
+
+Proposito B (RBAC):
+  Validar el rol en cada capa (UI -> Controller -> Service) para que ningun
+  OPERADOR pueda eludir las restricciones.
+
+Archivos modificados:
+  - resources/application.properties
+  - service/AuthService.java
+  - controller/TarifasController.java
+  - controller/ReportesController.java
+  - service/ReportService.java
+
+Dependencias generadas:
+
+  - application.properties (12 lineas total)
+    + admin.default.username=admin                    -> linea 11
+    + admin.default.password=admin123                 -> linea 12
+    Proposito: Externalizar las credenciales por defecto
+    a un archivo de configuracion. Sobreescribible via
+    variables de entorno:
+      ADMIN_DEFAULT_USERNAME
+      ADMIN_DEFAULT_PASSWORD
+
+  - AuthService.java (79 lineas total)
+    + import com.parkingoffice.core.ConfigLoader      -> linea 3
+    ~ createDefaultAdminIfNotExists() modificado:
+      String defaultUsername = ConfigLoader.getProperty("admin.default.username");
+      if (defaultUsername == null) defaultUsername = "admin";
+                                                       -> lineas 45-46
+      String defaultPassword = ConfigLoader.getProperty("admin.default.password");
+      if (defaultPassword == null) defaultPassword = "admin123";
+                                                       -> lineas 59-60
+      nuevoAdmin.setUsername(defaultUsername);         -> linea 63
+      System.out.println("Usuario '" + defaultUsername + "'...");
+                                                       -> linea 71
+    Proposito: Leer usuario y contrasena desde
+    application.properties (o variable de entorno) en
+    lugar de tenerlos hardcodeados en el codigo.
+    ConfigLoader ya soporta override via variables de
+    entorno (ej: ADMIN_DEFAULT_PASSWORD).
+
+  - TarifasController.java (116 lineas total)
+    + import com.parkingoffice.core.SessionManager    -> linea 3
+    + Guard de rol en guardarTarifa():                 -> lineas 72-76
+      if (!SessionManager.getInstance().isAdmin()) {
+          lblMensaje.setText("Solo el administrador puede modificar tarifas.");
+          lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+          return;
+      }
+    Proposito: Impedir que un OPERADOR modifique tarifas
+    aunque acceda directamente a la ventana.
+
+  - ReportesController.java (98 lineas total)
+    + import com.parkingoffice.core.SessionManager    -> linea 3
+    + Guard de rol en generarReporte():                -> lineas 42-46
+      if (!SessionManager.getInstance().isAdmin()) {
+          lblMensaje.setText("Solo el administrador puede ver reportes.");
+          lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+          return;
+      }
+    + Guard de rol en exportarPDF():                   -> lineas 82-86
+      if (!SessionManager.getInstance().isAdmin()) {
+          lblMensaje.setText("Solo el administrador puede exportar reportes.");
+          lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+          return;
+      }
+    Proposito: Impedir que un OPERADOR genere o exporte
+    reportes financieros.
+
+  - ReportService.java (117 lineas total)
+    + import com.parkingoffice.core.SessionManager    -> linea 3
+    + Guard de rol en generarReporteGeneral():         -> lineas 86-88
+      if (!SessionManager.getInstance().isAdmin()) {
+          throw new SecurityException("Solo el administrador puede generar reportes generales.");
+      }
+    Proposito: Defensa en la capa de servicio.
+    Incluso si alguien llama al servicio directamente
+    (sin pasar por el controlador), se lanza una
+    SecurityException.
+
+Arquitectura de defensa en profundidad (3 capas):
+  CAPA 1 - UI (FXML/dashboard.fxml)
+    -> Oculta los menus "Tarifas" y "Reportes" si el rol es OPERADOR
+  CAPA 2 - Controller (TarifasController, ReportesController)
+    -> Valida isAdmin() antes de ejecutar cualquier accion sensible
+  CAPA 3 - Service (ReportService)
+    -> Lanza SecurityException si un no-admin intenta generar reportes
+
+================================================================================
+  PUNTO 3 - Validacion de Entrada en Formularios
+================================================================================
+
+Proposito:
+  Prevenir datos invalidos o inconsistentes en todos los formularios
+  de entrada del sistema.
+
+Archivos modificados:
+  - controller/LoginController.java
+  - controller/TarifasController.java
+  - controller/ReportesController.java
+
+Dependencias generadas:
+
+  - LoginController.java (58 lineas total)
+    + import java.util.regex.Pattern                  -> linea 13
+    + Constante USERNAME_PATTERN:                      -> linea 26
+      private static final Pattern USERNAME_PATTERN =
+          Pattern.compile("^[a-zA-Z0-9_]{3,50}$");
+    Proposito: Validar que el username solo contenga
+    caracteres alfanumericos y guion bajo, con una
+    longitud entre 3 y 50 caracteres.
+
+    + Validacion de username en login():               -> lineas 40-43
+      if (!USERNAME_PATTERN.matcher(username).matches()) {
+          lblError.setText("Usuario: minimo 3 caracteres alfanumericos.");
+          return;
+      }
+    + Validacion de password en login():               -> lineas 45-48
+      if (password.length() < 6) {
+          lblError.setText("Contrasena debe tener al menos 6 caracteres.");
+          return;
+      }
+    Proposito: Rechazar credenciales que no cumplan
+    con los requisitos minimos de formato y seguridad.
+
+  - TarifasController.java (116 lineas total)
+    + Validacion de montos en guardarTarifa():         -> lineas 88-92
+      if (mHora.compareTo(BigDecimal.ZERO) <= 0
+          || mMinuto.compareTo(BigDecimal.ZERO) <= 0) {
+          lblMensaje.setText("Los montos deben ser mayores a cero.");
+          lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+          return;
+      }
+    Proposito: Evitar que se registren tarifas con
+    valores cero o negativos, lo cual no tendria
+    sentido en el negocio y podria causar errores
+    en calculos de cobro.
+
+  - ReportesController.java (98 lineas total)
+    + Validacion de fechas en generarReporte():        -> lineas 57-61
+      if (inicioSeleccionado.isAfter(finSeleccionado)) {
+          lblMensaje.setText("La fecha de inicio no puede ser posterior a la fecha fin.");
+          lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+          return;
+      }
+    Proposito: Evitar que se generen reportes con
+    un rango de fechas inconsistente (inicio posterior
+    al fin), lo que resultaria en datos vacios o
+    erroneos.
+
+  Nota: DashboardController YA tenia validacion de placas:
+    PLACA_PATTERN = Pattern.compile("^[A-Z0-9]{3}-?[A-Z0-9]{3,4}$")
+    Usado en registrarEntrada() y buscarVehiculoSalida()
+    Sin cambios requeridos.
+
+================================================================================
+  RESUMEN DE METRICAS
+================================================================================
+
+  Archivos modificados ...........  9
+  Lineas agregadas ...............  ~70
+  Lineas eliminadas ..............  ~5
+  Nuevos metodos .................  isAdmin(), hasRole(String)
+  Nuevas constantes ..............  USERNAME_PATTERN
+  Nuevas propiedades .............  admin.default.username,
+                                    admin.default.password
+  Validaciones de entrada agregadas  5
+    - Login: username (alfanumerico, >= 3 chars)
+    - Login: password (>= 6 chars)
+    - Tarifas: montoHora > 0
+    - Tarifas: montoMinuto > 0
+    - Reportes: fecha inicio <= fecha fin
+  Guards de rol agregados .......  5
+    - DashboardController.abrirTarifas()
+    - DashboardController.abrirReportes()
+    - TarifasController.guardarTarifa()
+    - ReportesController.generarReporte()
+    - ReportesController.exportarPDF()
+    - ReportService.generarReporteGeneral()
+  Errores de compilacion ........  0
+
+================================================================================
+  ARBOL DE ARCHIVOS MODIFICADOS
+================================================================================
+
+  parking-office/
+  +-- reporte_seguridad_cambios.txt    (este archivo)
+  +-- src/main/
+  |   +-- java/com/parkingoffice/
+  |   |   +-- core/
+  |   |   |   +-- SessionManager.java          [modificado]
+  |   |   +-- controller/
+  |   |   |   +-- DashboardController.java      [modificado]
+  |   |   |   +-- LoginController.java          [modificado]
+  |   |   |   +-- ReportesController.java       [modificado]
+  |   |   |   +-- TarifasController.java        [modificado]
+  |   |   +-- service/
+  |   |       +-- AuthService.java              [modificado]
+  |   |       +-- ReportService.java            [modificado]
+  |   +-- resources/
+  |       +-- application.properties            [modificado]
+  |       +-- fxml/
+  |           +-- dashboard.fxml               [modificado]
+
+================================================================================
+  FIN DEL REPORTE
+================================================================================

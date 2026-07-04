@@ -24,6 +24,14 @@ public class SessionManager {
         return currentUser;
     }
     
+    public boolean isAdmin() {
+        return hasRole("ADMINISTRADOR");
+    }
+
+    public boolean hasRole(String roleName) {
+        return currentUser != null && currentUser.getRol() != null && roleName.equals(currentUser.getRol().getNombre());
+    }
+
     public void logout() {
         this.currentUser = null;
     }

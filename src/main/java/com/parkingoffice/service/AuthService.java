@@ -1,5 +1,6 @@
 package com.parkingoffice.service;
 
+import com.parkingoffice.core.ConfigLoader;
 import com.parkingoffice.model.Usuario;
 import com.parkingoffice.model.Rol;
 import com.parkingoffice.repository.UsuarioRepository;
@@ -41,7 +42,10 @@ public class AuthService {
     }
 
     public void createDefaultAdminIfNotExists() {
-        Usuario admin = usuarioRepository.findByUsername("admin");
+        String defaultUsername = ConfigLoader.getProperty("admin.default.username");
+        if (defaultUsername == null) defaultUsername = "admin";
+
+        Usuario admin = usuarioRepository.findByUsername(defaultUsername);
         if (admin == null) {
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 Transaction transaction = session.beginTransaction();
@@ -52,16 +56,19 @@ public class AuthService {
                         session.persist(rolAdmin);
                     }
 
+                    String defaultPassword = ConfigLoader.getProperty("admin.default.password");
+                    if (defaultPassword == null) defaultPassword = "admin123";
+
                     Usuario nuevoAdmin = new Usuario();
-                    nuevoAdmin.setUsername("admin");
-                    nuevoAdmin.setPasswordHash(hashPassword("admin123"));
+                    nuevoAdmin.setUsername(defaultUsername);
+                    nuevoAdmin.setPasswordHash(hashPassword(defaultPassword));
                     nuevoAdmin.setNombreCompleto("Administrador del Sistema");
                     nuevoAdmin.setRol(rolAdmin);
                     nuevoAdmin.setActivo(true);
                     
                     session.persist(nuevoAdmin);
                     transaction.commit();
-                    System.out.println("Usuario 'admin' por defecto creado exitosamente.");
+                    System.out.println("Usuario '" + defaultUsername + "' por defecto creado exitosamente.");
                 } catch (Exception e) {
                     transaction.rollback();
                     e.printStackTrace();

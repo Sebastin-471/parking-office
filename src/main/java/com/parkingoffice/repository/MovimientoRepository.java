@@ -33,4 +33,15 @@ public class MovimientoRepository extends GenericRepository<Movimiento> {
                     .list();
         }
     }
+
+    public List<Movimiento> findAllByFechaIngresoBetween(LocalDateTime inicio, LocalDateTime fin) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "from Movimiento m join fetch m.vehiculo v join fetch v.tipoVehiculo join fetch m.usuarioIngreso left join fetch m.usuarioSalida where m.fechaIngreso between :inicio and :fin order by m.fechaIngreso desc",
+                    Movimiento.class)
+                    .setParameter("inicio", inicio)
+                    .setParameter("fin", fin)
+                    .list();
+        }
+    }
 }

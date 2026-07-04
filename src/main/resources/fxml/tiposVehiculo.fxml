@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="TOP_CENTER" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.TiposVehiculoController" stylesheets="@../css/styles.css" style="-fx-padding: 20px;">
+    <Label text="Gestión de Tipos de Vehículo" styleClass="label-header"/>
+
+    <HBox spacing="10">
+        <Button text="NUEVO TIPO" onAction="#nuevoTipo" styleClass="button-success"/>
+        <Button fx:id="btnEliminar" text="ELIMINAR" onAction="#eliminarTipo" styleClass="button-danger" disable="true"/>
+    </HBox>
+
+    <TableView fx:id="tblTipos" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
+            <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="350"/>
+        </columns>
+    </TableView>
+
+    <VBox fx:id="pnlFormulario" spacing="15" styleClass="card" visible="false" managed="false">
+        <Label text="Datos del Tipo de Vehículo" styleClass="label-subheader"/>
+        <GridPane hgap="15" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="120"/>
+                <ColumnConstraints minWidth="250"/>
+            </columnConstraints>
+            <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+
+            <Label text="Descripción:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextArea fx:id="txtDescripcion" GridPane.rowIndex="1" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+        </GridPane>
+        <Label fx:id="lblMensaje" styleClass="label-error" wrapText="true"/>
+        <HBox spacing="10">
+            <Button text="GUARDAR" onAction="#guardarTipo" styleClass="button-primary"/>
+            <Button text="CANCELAR" onAction="#cancelarEdicion" styleClass="button-danger"/>
+        </HBox>
+    </VBox>
+</VBox>

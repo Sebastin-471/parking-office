@@ -10,6 +10,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class LoginController {
 
@@ -22,6 +23,8 @@ public class LoginController {
     @FXML
     private Label lblError;
 
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{3,50}$");
+
     private final AuthService authService = new AuthService();
 
     @FXML
@@ -31,6 +34,16 @@ public class LoginController {
 
         if (username.isEmpty() || password.isEmpty()) {
             lblError.setText("Por favor ingrese usuario y contraseña.");
+            return;
+        }
+
+        if (!USERNAME_PATTERN.matcher(username).matches()) {
+            lblError.setText("Usuario: mínimo 3 caracteres alfanuméricos.");
+            return;
+        }
+
+        if (password.length() < 6) {
+            lblError.setText("Contraseña debe tener al menos 6 caracteres.");
             return;
         }
 

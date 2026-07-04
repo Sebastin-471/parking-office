@@ -34,6 +34,11 @@ public class DashboardController {
     private static final Pattern PLACA_PATTERN = Pattern.compile("^[A-Z0-9]{3}-?[A-Z0-9]{3,4}$");
 
     @FXML private Label lblWelcome;
+    @FXML private MenuItem menuTarifas;
+    @FXML private MenuItem menuReportes;
+    @FXML private MenuItem menuUsuarios;
+    @FXML private MenuItem menuTiposVehiculo;
+    @FXML private MenuItem menuHistorial;
     
     // Panel Entrada
     @FXML private TextField txtPlacaEntrada;
@@ -69,6 +74,14 @@ public class DashboardController {
 
         if (SessionManager.getInstance().getCurrentUser() != null) {
             lblWelcome.setText("Bienvenido, " + SessionManager.getInstance().getCurrentUser().getNombreCompleto());
+        }
+
+        if (!SessionManager.getInstance().isAdmin()) {
+            menuTarifas.setVisible(false);
+            menuReportes.setVisible(false);
+            menuUsuarios.setVisible(false);
+            menuTiposVehiculo.setVisible(false);
+            menuHistorial.setVisible(false);
         }
 
         // Configurar ComboBox
@@ -232,12 +245,32 @@ public class DashboardController {
 
     @FXML
     private void abrirTarifas() {
+        if (!SessionManager.getInstance().isAdmin()) return;
         abrirVentana("/fxml/tarifas.fxml", "Gestión de Tarifas");
     }
 
     @FXML
     private void abrirReportes() {
+        if (!SessionManager.getInstance().isAdmin()) return;
         abrirVentana("/fxml/reportes.fxml", "Reportes y Cierre de Caja");
+    }
+
+    @FXML
+    private void abrirUsuarios() {
+        if (!SessionManager.getInstance().isAdmin()) return;
+        abrirVentana("/fxml/usuarios.fxml", "Gestión de Usuarios");
+    }
+
+    @FXML
+    private void abrirTiposVehiculo() {
+        if (!SessionManager.getInstance().isAdmin()) return;
+        abrirVentana("/fxml/tiposVehiculo.fxml", "Gestión de Tipos de Vehículo");
+    }
+
+    @FXML
+    private void abrirHistorial() {
+        if (!SessionManager.getInstance().isAdmin()) return;
+        abrirVentana("/fxml/historial.fxml", "Historial de Movimientos");
     }
 
     private void abrirVentana(String fxmlPath, String titulo) {
