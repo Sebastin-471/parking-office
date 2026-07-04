@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="TOP_CENTER" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.HistorialController" stylesheets="@../css/styles.css" style="-fx-padding: 20px;">
+    <Label text="Historial de Movimientos" styleClass="label-header"/>
+
+    <VBox spacing="15" styleClass="card">
+        <Label text="Filtros" styleClass="label-subheader"/>
+        <GridPane hgap="15" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="100"/>
+                <ColumnConstraints minWidth="150"/>
+                <ColumnConstraints minWidth="100"/>
+                <ColumnConstraints minWidth="150"/>
+            </columnConstraints>
+            <Label text="Fecha Inicio:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="dpInicio" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+            <Label text="Fecha Fin:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+            <DatePicker fx:id="dpFin" GridPane.rowIndex="0" GridPane.columnIndex="3" styleClass="text-field"/>
+
+            <Label text="Placa:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtPlaca" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field" promptText="Filtrar por placa"/>
+            <Label text="Operador:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+            <TextField fx:id="txtOperador" GridPane.rowIndex="1" GridPane.columnIndex="3" styleClass="text-field" promptText="Filtrar por operador"/>
+        </GridPane>
+        <Label fx:id="lblMensaje" styleClass="label-error" wrapText="true"/>
+        <Button text="BUSCAR" onAction="#buscar" maxWidth="200" styleClass="button-primary"/>
+    </VBox>
+
+    <TableView fx:id="tblHistorial" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colPlaca" text="Placa" prefWidth="100"/>
+            <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
+            <TableColumn fx:id="colFechaIngreso" text="Ingreso" prefWidth="150"/>
+            <TableColumn fx:id="colFechaSalida" text="Salida" prefWidth="150"/>
+            <TableColumn fx:id="colOperadorIngreso" text="Operador Ingreso" prefWidth="150"/>
+            <TableColumn fx:id="colOperadorSalida" text="Operador Salida" prefWidth="150"/>
+            <TableColumn fx:id="colTotal" text="Total" prefWidth="90"/>
+            <TableColumn fx:id="colEstado" text="Estado" prefWidth="80"/>
+        </columns>
+    </TableView>
+</VBox>

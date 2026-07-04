@@ -15,6 +15,11 @@
                 <MenuItem fx:id="menuTarifas" text="Tarifas" onAction="#abrirTarifas"/>
                 <MenuItem fx:id="menuReportes" text="Reportes" onAction="#abrirReportes"/>
             </Menu>
+            <Menu text="Administración">
+                <MenuItem fx:id="menuUsuarios" text="Usuarios" onAction="#abrirUsuarios"/>
+                <MenuItem fx:id="menuTiposVehiculo" text="Tipos de Vehículo" onAction="#abrirTiposVehiculo"/>
+                <MenuItem fx:id="menuHistorial" text="Historial" onAction="#abrirHistorial"/>
+            </Menu>
         </MenuBar>
     </top>
     <center>
