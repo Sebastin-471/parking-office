@@ -1,0 +1,13 @@
+# Base de datos
+db.url=jdbc:postgresql://localhost:5432/parking_office
+db.user=postgres
+db.password=CHANGE_ME
+db.pool_size=5
+db.dialect=org.hibernate.dialect.PostgreSQLDialect
+db.show_sql=true
+db.format_sql=true
+db.hbm2ddl.auto=validate
+
+# Credenciales por defecto del administrador
+admin.default.username=admin
+admin.default.password=admin123

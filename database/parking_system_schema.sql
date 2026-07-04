@@ -72,3 +72,12 @@ INSERT INTO tipos_vehiculo (nombre, descripcion) VALUES
 ('MOTOTAXI', 'Mototaxi'),
 ('CAMIONETA', 'Camioneta') ON CONFLICT DO NOTHING;
 
+-- Configuración de espacios (capacidad total del estacionamiento)
+CREATE TABLE IF NOT EXISTS espacio_config (
+    id SERIAL PRIMARY KEY,
+    capacidad_maxima INTEGER NOT NULL DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE
+);
+
+INSERT INTO espacio_config (capacidad_maxima, activo) VALUES (0, TRUE) ON CONFLICT DO NOTHING;
+

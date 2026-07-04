@@ -35,5 +35,15 @@ Thumbs.db
 
 # Database / local config
 src/main/resources/application.properties
-*.properties
-!src/main/resources/*.properties.example
+!applications.properties.example
+
+# Compiled class files (also covered by target/)
+*.class
+
+# Maven
+target/
+.m2/
+
+# Local development files
+*.orig
+*.rej

@@ -19,14 +19,16 @@
                 <MenuItem fx:id="menuUsuarios" text="Usuarios" onAction="#abrirUsuarios"/>
                 <MenuItem fx:id="menuTiposVehiculo" text="Tipos de Vehículo" onAction="#abrirTiposVehiculo"/>
                 <MenuItem fx:id="menuHistorial" text="Historial" onAction="#abrirHistorial"/>
+                <MenuItem fx:id="menuEspacios" text="Espacios" onAction="#abrirEspacios"/>
             </Menu>
         </MenuBar>
     </top>
     <center>
-        <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30px;">
-            <Label fx:id="lblWelcome" styleClass="label-header" text="Dashboard Principal" />
-            
-            <HBox spacing="30" alignment="CENTER">
+<VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30px;">
+                <Label fx:id="lblWelcome" styleClass="label-header" text="Dashboard Principal" />
+                <Label fx:id="lblEspaciosDisponibles" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+                
+                <HBox spacing="30" alignment="CENTER">
                 <!-- Panel de Entrada -->
                 <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS">
                     <Label text="Registrar Entrada" styleClass="label-subheader" style="-fx-font-weight: bold;"/>

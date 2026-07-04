@@ -15,15 +15,41 @@ public class ParkingService {
     private final MovimientoRepository movimientoRepository;
     private final VehiculoRepository vehiculoRepository;
     private final TarifaRepository tarifaRepository;
+    private final EspacioConfigRepository espacioConfigRepository;
 
     public ParkingService() {
         this.movimientoRepository = new MovimientoRepository();
         this.vehiculoRepository = new VehiculoRepository();
         this.tarifaRepository = new TarifaRepository();
+        this.espacioConfigRepository = new EspacioConfigRepository();
+    }
+
+    public int getEspaciosDisponibles() {
+        EspacioConfig config = espacioConfigRepository.findActivo();
+        int capacidad = (config != null) ? config.getCapacidadMaxima() : 0;
+        int ocupados = movimientoRepository.findActivos().size();
+        return Math.max(0, capacidad - ocupados);
+    }
+
+    public int getCapacidadMaxima() {
+        EspacioConfig config = espacioConfigRepository.findActivo();
+        return (config != null) ? config.getCapacidadMaxima() : 0;
+    }
+
+    public boolean verificarEspacioDisponible() {
+        EspacioConfig config = espacioConfigRepository.findActivo();
+        if (config == null || config.getCapacidadMaxima() <= 0) {
+            return true;
+        }
+        int ocupados = movimientoRepository.findActivos().size();
+        return ocupados < config.getCapacidadMaxima();
     }
 
     public Movimiento registrarEntrada(String placa, TipoVehiculo tipoVehiculo, Usuario usuario) throws ParkingException {
-        // Find or create vehiculo
+        if (!verificarEspacioDisponible()) {
+            throw new ParkingFullException("El estacionamiento está lleno. No hay espacios disponibles.");
+        }
+
         Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa);
         if (vehiculo == null) {
             vehiculo = new Vehiculo();
@@ -34,18 +60,13 @@ public class ParkingService {
             throw new VehicleAlreadyParkedException("El vehículo ya se encuentra en el estacionamiento.");
         }
 
-
-
         Tarifa tarifa = tarifaRepository.findActivaByTipoVehiculo(tipoVehiculo.getId());
         if (tarifa == null) {
             throw new NoActiveRateException("No hay tarifa activa para este tipo de vehículo.");
         }
 
-
-
         Movimiento mov = new Movimiento();
         mov.setVehiculo(vehiculo);
-
         mov.setUsuarioIngreso(usuario);
         mov.setFechaIngreso(LocalDateTime.now());
         mov.setTarifaAplicada(tarifa);

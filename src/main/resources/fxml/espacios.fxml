@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="0.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.EspaciosController" stylesheets="@../css/styles.css">
+   
+   <VBox alignment="CENTER" spacing="20" maxWidth="400" styleClass="card">
+       <padding>
+           <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+       </padding>
+
+       <Label text="Gestión de Espacios" styleClass="label-header"/>
+       <Label text="Defina la capacidad total del estacionamiento" styleClass="label-subheader"/>
+       
+       <VBox spacing="10" maxWidth="Infinity">
+           <Label text="Capacidad Máxima (vehículos)" />
+           <TextField fx:id="txtCapacidad" promptText="Ej: 20" styleClass="text-field" maxWidth="Infinity"/>
+           
+           <Label fx:id="lblDisponibleActual" styleClass="label-info"/>
+           
+           <Label fx:id="lblMensaje" styleClass="label-error" wrapText="true"/>
+           
+           <Button text="GUARDAR CONFIGURACIÓN" onAction="#guardar" maxWidth="Infinity" styleClass="button-primary"/>
+       </VBox>
+   </VBox>
+</VBox>

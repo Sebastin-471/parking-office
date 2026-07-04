@@ -9,6 +9,7 @@ import com.parkingoffice.repository.TipoVehiculoRepository;
 import com.parkingoffice.service.ParkingService;
 import com.parkingoffice.service.ReportService;
 import com.parkingoffice.exception.ParkingException;
+import com.parkingoffice.exception.ParkingFullException;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -34,11 +35,13 @@ public class DashboardController {
     private static final Pattern PLACA_PATTERN = Pattern.compile("^[A-Z0-9]{3}-?[A-Z0-9]{3,4}$");
 
     @FXML private Label lblWelcome;
+    @FXML private Label lblEspaciosDisponibles;
     @FXML private MenuItem menuTarifas;
     @FXML private MenuItem menuReportes;
     @FXML private MenuItem menuUsuarios;
     @FXML private MenuItem menuTiposVehiculo;
     @FXML private MenuItem menuHistorial;
+    @FXML private MenuItem menuEspacios;
     
     // Panel Entrada
     @FXML private TextField txtPlacaEntrada;
@@ -82,6 +85,8 @@ public class DashboardController {
             menuUsuarios.setVisible(false);
             menuTiposVehiculo.setVisible(false);
             menuHistorial.setVisible(false);
+            menuEspacios.setVisible(false);
+            lblEspaciosDisponibles.setVisible(false);
         }
 
         // Configurar ComboBox
@@ -124,6 +129,19 @@ public class DashboardController {
     private void cargarMovimientosActivos() {
         List<Movimiento> activos = movimientoRepository.findActivos();
         tblMovimientosActivos.setItems(FXCollections.observableArrayList(activos));
+        actualizarEspaciosDisponibles();
+    }
+
+    private void actualizarEspaciosDisponibles() {
+        int disponibles = parkingService.getEspaciosDisponibles();
+        int capacidad = parkingService.getCapacidadMaxima();
+        if (capacidad > 0) {
+            lblEspaciosDisponibles.setText("Espacios disponibles: " + disponibles + " / " + capacidad);
+            lblEspaciosDisponibles.setStyle("-fx-text-fill: " + (disponibles > 0 ? "#2ecc71;" : "#e74c3c;"));
+        } else {
+            lblEspaciosDisponibles.setText("Límite de espacios no configurado");
+            lblEspaciosDisponibles.setStyle("-fx-text-fill: #f39c12;");
+        }
     }
 
     @FXML
@@ -157,6 +175,9 @@ public class DashboardController {
             cmbTipoVehiculo.setValue(null);
             cargarMovimientosActivos();
             
+        } catch (ParkingFullException e) {
+            lblMensajeEntrada.setText(e.getMessage());
+            lblMensajeEntrada.setStyle("-fx-text-fill: #e74c3c;");
         } catch (ParkingException e) {
             lblMensajeEntrada.setText(e.getMessage());
             lblMensajeEntrada.setStyle("-fx-text-fill: #e74c3c;");
@@ -271,6 +292,12 @@ public class DashboardController {
     private void abrirHistorial() {
         if (!SessionManager.getInstance().isAdmin()) return;
         abrirVentana("/fxml/historial.fxml", "Historial de Movimientos");
+    }
+
+    @FXML
+    private void abrirEspacios() {
+        if (!SessionManager.getInstance().isAdmin()) return;
+        abrirVentana("/fxml/espacios.fxml", "Gestión de Espacios");
     }
 
     private void abrirVentana(String fxmlPath, String titulo) {
