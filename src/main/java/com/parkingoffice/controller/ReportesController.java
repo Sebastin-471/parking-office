@@ -3,9 +3,20 @@ package com.parkingoffice.controller;
 import com.parkingoffice.core.SessionManager;
 import com.parkingoffice.model.Movimiento;
 import com.parkingoffice.repository.MovimientoRepository;
+import com.parkingoffice.service.ChartService;
 import com.parkingoffice.service.ReportService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +31,10 @@ public class ReportesController {
     @FXML private Label lblTotalRecaudado;
     @FXML private Label lblMensaje;
     @FXML private Button btnExportar;
+    @FXML private Button btnImprimir;
+    @FXML private ImageView imgGraficoOcupacion;
+    @FXML private ImageView imgGraficoRecaudacion;
+    @FXML private ImageView imgGraficoDistribucion;
 
     private MovimientoRepository movimientoRepository;
     private ReportService reportService;
@@ -74,7 +89,31 @@ public class ReportesController {
         lblTotalRecaudado.setText("$" + totalRecaudado.toString());
 
         btnExportar.setDisable(totalVehiculos == 0);
+        btnImprimir.setDisable(totalVehiculos == 0);
         lblMensaje.setText("");
+
+        ChartService chartService = new ChartService();
+        try {
+            BufferedImage imgOcupacion = chartService.generarGraficoOcupacionTemporal(movimientos);
+            BufferedImage imgRecaudacion = chartService.generarGraficoRecaudacionDiaria(movimientos);
+            BufferedImage imgDistribucion = chartService.generarGraficoDistribucionTiposVehiculo(movimientos);
+
+            imgGraficoOcupacion.setImage(bufferedImageToFXImage(imgOcupacion));
+            imgGraficoRecaudacion.setImage(bufferedImageToFXImage(imgRecaudacion));
+            imgGraficoDistribucion.setImage(bufferedImageToFXImage(imgDistribucion));
+        } catch (Exception e) {
+            lblMensaje.setText("Error al generar gráficos: " + e.getMessage());
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+        }
+    }
+
+    private Image bufferedImageToFXImage(BufferedImage bufferedImage) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(bufferedImage, "png", baos);
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())) {
+                return new Image(bais);
+            }
+        }
     }
 
     @FXML
@@ -92,6 +131,36 @@ public class ReportesController {
             lblMensaje.setStyle("-fx-text-fill: #2ecc71;");
         } catch (Exception e) {
             lblMensaje.setText("Error al generar PDF: " + e.getMessage());
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+        }
+    }
+
+    @FXML
+    private void imprimirReporte() {
+        if (!SessionManager.getInstance().isAdmin()) {
+            lblMensaje.setText("Solo el administrador puede imprimir reportes.");
+            lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+            return;
+        }
+
+        VBox contenidoImprimible = new VBox(10);
+        contenidoImprimible.setStyle("-fx-padding: 20px; -fx-background-color: white;");
+
+        Text titulo = new Text("PARKING OFFICE - REPORTE DE CAJA");
+        titulo.setFont(javafx.scene.text.Font.font("Arial", 18));
+
+        Text periodo = new Text("Período: " + inicioSeleccionado + " a " + finSeleccionado);
+        Text totalVehic = new Text("Total Vehículos Atendidos: " + totalVehiculos);
+        Text totalRec = new Text("Total Recaudado: $" + totalRecaudado);
+
+        contenidoImprimible.getChildren().addAll(titulo, periodo, totalVehic, totalRec);
+
+        boolean impreso = reportService.imprimirNodo(contenidoImprimible, lblMensaje.getScene().getWindow());
+        if (impreso) {
+            lblMensaje.setText("Reporte enviado a impresión.");
+            lblMensaje.setStyle("-fx-text-fill: #2ecc71;");
+        } else {
+            lblMensaje.setText("Impresión cancelada o no disponible.");
             lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
         }
     }

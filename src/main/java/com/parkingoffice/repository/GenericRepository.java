@@ -2,10 +2,13 @@ package com.parkingoffice.repository;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public abstract class GenericRepository<T> {
     private Class<T> clazz;
+    private static final Logger logger = LoggerFactory.getLogger(GenericRepository.class);
 
     public GenericRepository(Class<T> clazz) {
         this.clazz = clazz;
@@ -21,7 +24,7 @@ public abstract class GenericRepository<T> {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.error("Error al guardar entidad de tipo {}.", clazz.getName(), e);
         }
     }
 
@@ -35,7 +38,7 @@ public abstract class GenericRepository<T> {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.error("Error al actualizar entidad de tipo {}.", clazz.getName(), e);
         }
     }
 
@@ -64,7 +67,7 @@ public abstract class GenericRepository<T> {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.error("Error al eliminar entidad de tipo {}.", clazz.getName(), e);
         }
     }
 }

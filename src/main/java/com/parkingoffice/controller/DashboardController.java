@@ -14,13 +14,17 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.fxml.FXMLLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +37,7 @@ import java.util.regex.Pattern;
 public class DashboardController {
 
     private static final Pattern PLACA_PATTERN = Pattern.compile("^[A-Z0-9]{3}-?[A-Z0-9]{3,4}$");
+    private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
     @FXML private Label lblWelcome;
     @FXML private Label lblEspaciosDisponibles;
@@ -122,7 +127,7 @@ public class DashboardController {
         try {
             Files.createDirectories(Paths.get("tickets"));
         } catch (IOException e) {
-            System.err.println("No se pudo crear el directorio de tickets.");
+            logger.error("No se pudo crear el directorio de tickets.", e);
         }
     }
 
@@ -168,6 +173,9 @@ public class DashboardController {
             String path = "tickets/entrada_" + mov.getId() + ".pdf";
             reportService.generarTicketEntrada(mov, path);
 
+            VBox ticketNode = crearTicketEntradaNode(mov);
+            reportService.imprimirNodo(ticketNode, txtPlacaEntrada.getScene().getWindow());
+            
             lblMensajeEntrada.setText("Entrada registrada. Ticket generado en: " + path);
             lblMensajeEntrada.setStyle("-fx-text-fill: #2ecc71;");
             
@@ -235,6 +243,9 @@ public class DashboardController {
             // Generar Comprobante
             String path = "tickets/salida_" + actualizado.getId() + ".pdf";
             reportService.generarComprobanteSalida(actualizado, path);
+
+            VBox comprobanteNode = crearComprobanteSalidaNode(actualizado);
+            reportService.imprimirNodo(comprobanteNode, txtPlacaSalida.getScene().getWindow());
             
             lblMensajeSalida.setText("Salida procesada. Total: $" + actualizado.getTotalPagar() + ". Ticket en: " + path);
             lblMensajeSalida.setStyle("-fx-text-fill: #2ecc71;");
@@ -300,6 +311,43 @@ public class DashboardController {
         abrirVentana("/fxml/espacios.fxml", "Gestión de Espacios");
     }
 
+    private VBox crearTicketEntradaNode(Movimiento mov) {
+        VBox box = new VBox(10);
+        box.setStyle("-fx-padding: 20px; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-width: 1px;");
+        
+        Text titulo = new Text("PARKING OFFICE - TICKET DE ENTRADA");
+        titulo.setFont(Font.font("Arial", 18));
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        
+        Text idMov = new Text("ID Movimiento: " + mov.getId());
+        Text placa = new Text("Placa: " + mov.getVehiculo().getPlaca());
+        Text fechaIngreso = new Text("Fecha/Hora Ingreso: " + mov.getFechaIngreso().format(formatter));
+        Text operador = new Text("Operador: " + mov.getUsuarioIngreso().getNombreCompleto());
+        
+        box.getChildren().addAll(titulo, idMov, placa, fechaIngreso, operador);
+        return box;
+    }
+
+    private VBox crearComprobanteSalidaNode(Movimiento mov) {
+        VBox box = new VBox(10);
+        box.setStyle("-fx-padding: 20px; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-width: 1px;");
+        
+        Text titulo = new Text("PARKING OFFICE - COMPROBANTE DE PAGO");
+        titulo.setFont(Font.font("Arial", 18));
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        
+        Text placa = new Text("Placa: " + mov.getVehiculo().getPlaca());
+        Text ingreso = new Text("Ingreso: " + mov.getFechaIngreso().format(formatter));
+        Text salida = new Text("Salida: " + mov.getFechaSalida().format(formatter));
+        Text total = new Text("Total a Pagar: $" + mov.getTotalPagar());
+        Text atendido = new Text("Atendido por: " + mov.getUsuarioSalida().getNombreCompleto());
+        
+        box.getChildren().addAll(titulo, placa, ingreso, salida, total, atendido);
+        return box;
+    }
+
     private void abrirVentana(String fxmlPath, String titulo) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -310,7 +358,7 @@ public class DashboardController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error al abrir ventana {}.", fxmlPath, e);
         }
     }
 }

@@ -1,4 +1,4 @@
-# parking-office
+﻿# parking-office
 
 Repositorio: [github.com/Sebastin-471/parking-office](https://github.com/Sebastin-471/parking-office)
 
@@ -29,8 +29,11 @@ Desarrollar una aplicación de escritorio en Java que permita:
 | Gestión Tipos Vehículo | ✅ Completo | CRUD completo |
 | Historial Movimientos | ✅ Completo | Filtros por fecha/placa |
 | Reportes PDF | ✅ Completo | Tickets y cierre de caja |
-| Control de Espacios | ✅ Implementado | Capacidad simple (total vehículos) |
-| Tests Unitarios | ⚠️ Parcial | Solo test stub, sin cobertura real |
+| Impresión Directa | ✅ Completo | Impresión automática de tickets y reportes |
+| Gráficos JFreeChart | ✅ Completo | Ocupación, recaudación y distribución en reportes |
+| Control de Espacios | ✅ Completo | Capacidad configurable con validación |
+| Tests Unitarios | ✅ Completo | 15 pruebas unitarias (JUnit 5 + Mockito) |
+| Code Quality / Logging | ✅ Completo | SLF4J + Logback, sin printStackTrace |
 
 ---
 
@@ -54,16 +57,18 @@ Desarrollar una aplicación de escritorio en Java que permita:
 | Driver de base de datos              | PostgreSQL JDBC Driver    |
 | Seguridad (hash de contraseñas)      | jBCrypt                   |
 | Generación de PDF (tickets/reportes) | Apache PDFBox             |
-| Gráficos de reportes               | JFreeChart (no usado)     |
+| Gráficos de reportes                 | JFreeChart                |
 | Logs                                 | SLF4J + Logback           |
+| Testing                              | JUnit 5, Mockito          |
+| Testing (integración)                | Testcontainers (perfil separado) |
 | Gestor de dependencias               | Maven                     |
 
 ### Base de datos
 
 | Categoría              | Detalle                                                                                     |
 | ---------------------- | ------------------------------------------------------------------------------------------- |
-| Motor                  | PostgreSQL 16+                                                                                |
-| Cliente administrativo | pgAdmin                                                                                      |
+| Motor                  | PostgreSQL 16+                                                                              |
+| Cliente administrativo | pgAdmin                                                                                     |
 | Entidades implementadas| `roles`, `usuarios`, `tipos_vehiculo`, `vehiculos`, `tarifas`, `movimientos`, `espacio_config` |
 | Relación núcleo        | `movimientos` conecta vehículo, usuario y tarifa en cada registro de entrada/salida |
 
@@ -99,7 +104,7 @@ parking-office/
 │   │   │       │   ├── TarifaRepository.java
 │   │   │       │   ├── MovimientoRepository.java
 │   │   │       │   └── EspacioConfigRepository.java
-│   │   │       ├── service/        # AuthService, ParkingService, ReportService
+│   │   │       ├── service/        # AuthService, ParkingService, ReportService, ChartService
 │   │   │       ├── controller/     # LoginController, DashboardController, etc.
 │   │   │       ├── core/           # SessionManager, ConfigLoader
 │   │   │       └── exception/      # VehicleNotFoundException, NoActiveRateException, VehicleAlreadyParkedException, ParkingFullException
@@ -164,10 +169,7 @@ El sistema ahora incluye control de capacidad del estacionamiento:
 
 | Prioridad | Funcionalidad |
 |-----------|--------------|
-| 🟡 Media | CSS de Estilos | `styles.css` no existe físicamente |
-| 🟡 Media | Tests Unitarios | Implementar cobertura real con Testcontainers |
-| 🟢 Baja | Impresión Directa | Los tickets PDF se guardan pero no se imprimen automáticamente |
-| 🟢 Baja | Gráficos JFreeChart | La dependencia está pero no se usa |
+| 🟢 Baja | Tests de integración (Testcontainers) | Actualmente excluidos del build normal por dependencia de Docker |
 
 ---
 

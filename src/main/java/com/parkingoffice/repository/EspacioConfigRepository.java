@@ -3,8 +3,11 @@ package com.parkingoffice.repository;
 import com.parkingoffice.model.EspacioConfig;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EspacioConfigRepository extends GenericRepository<EspacioConfig> {
+    private static final Logger logger = LoggerFactory.getLogger(EspacioConfigRepository.class);
 
     public EspacioConfigRepository() {
         super(EspacioConfig.class);
@@ -37,7 +40,7 @@ public class EspacioConfigRepository extends GenericRepository<EspacioConfig> {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.error("Error al guardar EspacioConfig.", e);
         }
     }
 
@@ -51,7 +54,7 @@ public class EspacioConfigRepository extends GenericRepository<EspacioConfig> {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.error("Error al actualizar EspacioConfig.", e);
         }
     }
 }

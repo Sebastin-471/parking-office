@@ -2,6 +2,10 @@ package com.parkingoffice.service;
 
 import com.parkingoffice.core.SessionManager;
 import com.parkingoffice.model.Movimiento;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
+import javafx.scene.Node;
+import javafx.stage.Window;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -113,5 +117,34 @@ public class ReportService {
 
             document.save(new File(outputPath));
         }
+    }
+
+    public boolean imprimirNodo(Node nodoImprimible, Window owner) {
+        if (nodoImprimible == null) {
+            return false;
+        }
+
+        PrinterJob printerJob = PrinterJob.createPrinterJob();
+        if (printerJob == null) {
+            return false;
+        }
+
+        Printer printer = printerJob.getPrinter();
+        if (printer == null) {
+            return false;
+        }
+
+        boolean showDialog = printerJob.showPrintDialog(owner);
+        if (!showDialog) {
+            return false;
+        }
+
+        boolean success = printerJob.printPage(nodoImprimible);
+        if (success) {
+            printerJob.endJob();
+            return true;
+        }
+
+        return false;
     }
 }

@@ -3,19 +3,20 @@ package com.parkingoffice.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.slf4j.LoggerFactory;
 
 public class ConfigLoader {
     private static final Properties properties = new Properties();
 
-    static {
+     static {
         try (InputStream input = ConfigLoader.class.getClassLoader().getResourceAsStream("application.properties")) {
             if (input == null) {
-                System.out.println("Lo siento, no se pudo encontrar el archivo application.properties");
+                LoggerFactory.getLogger(ConfigLoader.class).warn("Lo siento, no se pudo encontrar el archivo application.properties");
             } else {
                 properties.load(input);
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LoggerFactory.getLogger(ConfigLoader.class).error("Error al cargar application.properties.", ex);
         }
     }
 

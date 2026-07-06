@@ -18,10 +18,14 @@ public class ParkingService {
     private final EspacioConfigRepository espacioConfigRepository;
 
     public ParkingService() {
-        this.movimientoRepository = new MovimientoRepository();
-        this.vehiculoRepository = new VehiculoRepository();
-        this.tarifaRepository = new TarifaRepository();
-        this.espacioConfigRepository = new EspacioConfigRepository();
+        this(new MovimientoRepository(), new VehiculoRepository(), new TarifaRepository(), new EspacioConfigRepository());
+    }
+
+    public ParkingService(MovimientoRepository movimientoRepository, VehiculoRepository vehiculoRepository, TarifaRepository tarifaRepository, EspacioConfigRepository espacioConfigRepository) {
+        this.movimientoRepository = movimientoRepository;
+        this.vehiculoRepository = vehiculoRepository;
+        this.tarifaRepository = tarifaRepository;
+        this.espacioConfigRepository = espacioConfigRepository;
     }
 
     public int getEspaciosDisponibles() {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
 
 <VBox spacing="20" style="-fx-padding: 30px;" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.parkingoffice.controller.ReportesController">
@@ -33,6 +34,14 @@
         <Separator />
         
         <Button text="EXPORTAR A PDF" onAction="#exportarPDF" maxWidth="Infinity" styleClass="button-success" fx:id="btnExportar" disable="true"/>
+        <Button text="IMPRIMIR REPORTE" onAction="#imprimirReporte" maxWidth="Infinity" styleClass="button-primary" fx:id="btnImprimir" disable="true"/>
         <Label fx:id="lblMensaje" styleClass="label-success" wrapText="true"/>
+    </VBox>
+
+    <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+        <Label text="Gráficos" styleClass="label-subheader" style="-fx-font-weight: bold;"/>
+        <ImageView fx:id="imgGraficoOcupacion" fitWidth="800" preserveRatio="true"/>
+        <ImageView fx:id="imgGraficoRecaudacion" fitWidth="800" preserveRatio="true"/>
+        <ImageView fx:id="imgGraficoDistribucion" fitWidth="600" preserveRatio="true"/>
     </VBox>
 </VBox>

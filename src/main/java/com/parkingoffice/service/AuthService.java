@@ -9,13 +9,21 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AuthService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     private final UsuarioRepository usuarioRepository;
     private Usuario loggedInUser;
 
     public AuthService() {
-        this.usuarioRepository = new UsuarioRepository();
+        this(new UsuarioRepository());
+    }
+
+    public AuthService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     public Usuario login(String username, String password) {
@@ -68,10 +76,10 @@ public class AuthService {
                     
                     session.persist(nuevoAdmin);
                     transaction.commit();
-                    System.out.println("Usuario '" + defaultUsername + "' por defecto creado exitosamente.");
+                    logger.info("Usuario '{}' por defecto creado exitosamente.", defaultUsername);
                 } catch (Exception e) {
                     transaction.rollback();
-                    e.printStackTrace();
+                    logger.error("No se pudo crear el usuario administrador por defecto.", e);
                 }
             }
         }
